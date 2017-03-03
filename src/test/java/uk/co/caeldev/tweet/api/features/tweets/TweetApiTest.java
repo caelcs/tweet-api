@@ -8,6 +8,7 @@ import uk.co.caeldev.tweet.api.BaseIntegrationTest;
 import uk.co.caeldev.tweet.api.features.users.User;
 import uk.co.caeldev.tweet.api.features.users.UserRepository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,7 +86,7 @@ public class TweetApiTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(equalTo(CREATED.value())).extract().body().as(TweetResource.class);
 
-        given()
+        final TweetResource response2Body = given()
                 .port(serverPort)
                 .body(message)
                 .header("userGUID", responseBody.getUserGUID())
@@ -93,9 +94,9 @@ public class TweetApiTest extends BaseIntegrationTest {
                 .post("/tweets/")
                 .then()
                 .assertThat()
-                .statusCode(equalTo(CREATED.value()));
+                .statusCode(equalTo(CREATED.value())).extract().body().as(TweetResource.class);
 
-        List<TweetResource> tweets = given()
+        List<LinkedHashMap> tweets = given()
                 .port(serverPort)
                 .header("userGUID", responseBody.getUserGUID())
                 .when()
@@ -105,6 +106,8 @@ public class TweetApiTest extends BaseIntegrationTest {
                 .statusCode(equalTo(OK.value())).extract().body().as(List.class);
 
         assertThat(tweets).hasSize(2);
+        assertThat(tweets.get(0).get("tweetGUID")).isEqualTo(response2Body.getTweetGUID().toString());
+        assertThat(tweets.get(1).get("tweetGUID")).isEqualTo(responseBody.getTweetGUID().toString());
     }
 
 }

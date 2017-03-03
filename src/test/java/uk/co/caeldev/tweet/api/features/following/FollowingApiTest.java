@@ -1,5 +1,6 @@
 package uk.co.caeldev.tweet.api.features.following;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -93,6 +94,16 @@ public class FollowingApiTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(equalTo(CREATED.value())).extract().body().as(TweetResource.class);
 
+        TweetResource tweetResource2User1 = given()
+                .port(serverPort)
+                .body(string().next())
+                .header("userGUID", tweetResourceUser1.getUserGUID())
+                .when()
+                .post("/tweets/")
+                .then()
+                .assertThat()
+                .statusCode(equalTo(CREATED.value())).extract().body().as(TweetResource.class);
+
         given()
                 .port(serverPort)
                 .header("userGUID", tweetResourceUser2.getUserGUID())
@@ -120,9 +131,12 @@ public class FollowingApiTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(equalTo(OK.value())).extract().body().as(List.class);
 
-        assertThat(timelineUser2).hasSize(1);
-        assertThat(timelineUser2.get(0).get("userGUID")).isEqualTo(tweetResourceUser1.getUserGUID().toString());
+        assertThat(timelineUser2).hasSize(2);
+        assertThat(timelineUser2.get(0).get("tweetGUID")).isEqualTo(tweetResource2User1.getTweetGUID().toString());
+        assertThat(timelineUser2.get(1).get("tweetGUID")).isEqualTo(tweetResourceUser1.getTweetGUID().toString());
 
         assertThat(timelineUser1).isEmpty();
     }
+
+
 }
