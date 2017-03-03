@@ -8,6 +8,4 @@ public interface TweetService {
     Tweet postTweet(String message, User user);
 
     List<Tweet> getTweetsByUserId(Long id);
-
-    List<Tweet> getTimeline(Long userId);
 }

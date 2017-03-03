@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class TweetRepository {
     public List<Tweet> findAllFollowingTweets(List<Long> expectedFollowingUserIds) {
         return tweets.stream()
                 .filter((tweet -> expectedFollowingUserIds.contains(tweet.getUserId())))
+                .sorted(Comparator.comparing(Tweet::getCreationDate).reversed())
                 .collect(Collectors.toList());
     }
 }

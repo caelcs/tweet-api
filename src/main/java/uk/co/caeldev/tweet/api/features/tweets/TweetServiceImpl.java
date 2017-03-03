@@ -38,9 +38,4 @@ public class TweetServiceImpl implements TweetService {
                 .sorted(Comparator.comparing(Tweet::getCreationDate).reversed())
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public List<Tweet> getTimeline(Long userId) {
-        return null;
-    }
 }

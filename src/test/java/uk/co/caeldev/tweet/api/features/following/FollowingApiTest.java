@@ -102,7 +102,7 @@ public class FollowingApiTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(equalTo(CREATED.value()));
 
-        List<LinkedHashMap> timelineTweets = given()
+        List<LinkedHashMap> timelineUser2 = given()
                 .port(serverPort)
                 .header("userGUID", tweetResourceUser2.getUserGUID())
                 .when()
@@ -111,7 +111,18 @@ public class FollowingApiTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(equalTo(OK.value())).extract().body().as(List.class);
 
-        assertThat(timelineTweets).hasSize(1);
-        assertThat(timelineTweets.get(0).get("userGUID")).isEqualTo(tweetResourceUser1.getUserGUID().toString());
+        List<LinkedHashMap> timelineUser1 = given()
+                .port(serverPort)
+                .header("userGUID", tweetResourceUser1.getUserGUID())
+                .when()
+                .get("/timeline")
+                .then()
+                .assertThat()
+                .statusCode(equalTo(OK.value())).extract().body().as(List.class);
+
+        assertThat(timelineUser2).hasSize(1);
+        assertThat(timelineUser2.get(0).get("userGUID")).isEqualTo(tweetResourceUser1.getUserGUID().toString());
+
+        assertThat(timelineUser1).isEmpty();
     }
 }
